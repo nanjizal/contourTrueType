@@ -1,0 +1,25 @@
+-cp src
+
+-resource fonts/AvenirNextCyr-Bold.ttf@font
+
+-js test.js
+-lib fracs
+-lib justPath
+-lib pallette
+-lib hxPolyK
+-lib poly2trihx 
+-lib hxGeomAlgo
+-lib cornerContour
+## need version hxTrueType from Nanjizal, bit of an old one.
+-lib hxTrueType
+-lib htmlHelper
+
+-main cornerContourWebGLTest.CornerContourWebGL
+-D js-flatten 
+-dce full
+#--no-traces
+--next
+
+-cmd echo '<!DOCTYPE html><meta charset="UTF-8"><html><body><script src="test.js"></script></body></html>' >index.html
+# open html on mac os.
+-cmd open index.html
