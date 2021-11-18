@@ -7110,6 +7110,45 @@ cornerContour_io_Array2DTriangles.triangle = function(this1,ax_,ay_,bx_,by_,cx_,
 cornerContour_io_Array2DTriangles.adjustWinding = function(this1) {
 	return cornerContour_io_Array2DTriangles.get_ax(this1) * cornerContour_io_Array2DTriangles.get_by(this1) - cornerContour_io_Array2DTriangles.get_bx(this1) * cornerContour_io_Array2DTriangles.get_ay(this1) + (cornerContour_io_Array2DTriangles.get_bx(this1) * cornerContour_io_Array2DTriangles.get_cy(this1) - cornerContour_io_Array2DTriangles.get_cx(this1) * cornerContour_io_Array2DTriangles.get_by(this1)) + (cornerContour_io_Array2DTriangles.get_cx(this1) * cornerContour_io_Array2DTriangles.get_ay(this1) - cornerContour_io_Array2DTriangles.get_ax(this1) * cornerContour_io_Array2DTriangles.get_cy(this1)) > 0;
 };
+cornerContour_io_Array2DTriangles.translateRange = function(this1,range,dx,dy) {
+	var curPos = this1[0];
+	var _g_min = range.start;
+	var _g_max = range.max;
+	while(_g_min < _g_max) {
+		var i = _g_min++;
+		this1[0] = i;
+		cornerContour_io_Array2DTriangles.set_ax(this1,cornerContour_io_Array2DTriangles.get_ax(this1) + dx);
+		cornerContour_io_Array2DTriangles.set_ay(this1,cornerContour_io_Array2DTriangles.get_ay(this1) + dy);
+		cornerContour_io_Array2DTriangles.set_bx(this1,cornerContour_io_Array2DTriangles.get_bx(this1) + dx);
+		cornerContour_io_Array2DTriangles.set_by(this1,cornerContour_io_Array2DTriangles.get_by(this1) + dy);
+		cornerContour_io_Array2DTriangles.set_cx(this1,cornerContour_io_Array2DTriangles.get_cx(this1) + dx);
+		cornerContour_io_Array2DTriangles.set_cy(this1,cornerContour_io_Array2DTriangles.get_cy(this1) + dy);
+	}
+	this1[0] = curPos;
+};
+var cornerContour_io_ArrayFlatDepth = {};
+cornerContour_io_ArrayFlatDepth.cloneRangeToPos = function(this1,starting,totalLen,section) {
+	var currPos = this1[0];
+	var ending = starting + totalLen;
+	var temp = [];
+	var count = 0;
+	var _g = starting;
+	var _g1 = ending;
+	while(_g < _g1) {
+		var i = _g++;
+		temp[count++] = this1[i + 1];
+	}
+	count = 0;
+	var _g = section;
+	var _g1 = section + totalLen;
+	while(_g < _g1) {
+		var i = _g++;
+		var v = temp[count++];
+		this1[i + 1] = v;
+	}
+	temp = null;
+	return true;
+};
 var cornerContour_io_ColorTriangles2D = {};
 cornerContour_io_ColorTriangles2D.get_ax = function(this1) {
 	return this1[(this1[0] | 0) * 18 + 2];
@@ -7185,6 +7224,28 @@ cornerContour_io_ColorTriangles2D.triangle = function(this1,ax_,ay_,bx_,by_,cx_,
 };
 cornerContour_io_ColorTriangles2D.adjustWinding = function(this1) {
 	return cornerContour_io_ColorTriangles2D.get_ax(this1) * cornerContour_io_ColorTriangles2D.get_by(this1) - cornerContour_io_ColorTriangles2D.get_bx(this1) * cornerContour_io_ColorTriangles2D.get_ay(this1) + (cornerContour_io_ColorTriangles2D.get_bx(this1) * cornerContour_io_ColorTriangles2D.get_cy(this1) - cornerContour_io_ColorTriangles2D.get_cx(this1) * cornerContour_io_ColorTriangles2D.get_by(this1)) + (cornerContour_io_ColorTriangles2D.get_cx(this1) * cornerContour_io_ColorTriangles2D.get_ay(this1) - cornerContour_io_ColorTriangles2D.get_ax(this1) * cornerContour_io_ColorTriangles2D.get_cy(this1)) > 0;
+};
+cornerContour_io_ColorTriangles2D.translateRange = function(this1,range,dx,dy) {
+	var curPos = this1[0];
+	var _g_min = range.start;
+	var _g_max = range.max;
+	while(_g_min < _g_max) {
+		var i = _g_min++;
+		this1[0] = i;
+		if(this1[0] > this1[1] - 1) {
+			this1[1] = this1[0];
+		}
+		cornerContour_io_ColorTriangles2D.set_ax(this1,cornerContour_io_ColorTriangles2D.get_ax(this1) + dx);
+		cornerContour_io_ColorTriangles2D.set_ay(this1,cornerContour_io_ColorTriangles2D.get_ay(this1) + dy);
+		cornerContour_io_ColorTriangles2D.set_bx(this1,cornerContour_io_ColorTriangles2D.get_bx(this1) + dx);
+		cornerContour_io_ColorTriangles2D.set_by(this1,cornerContour_io_ColorTriangles2D.get_by(this1) + dy);
+		cornerContour_io_ColorTriangles2D.set_cx(this1,cornerContour_io_ColorTriangles2D.get_cx(this1) + dx);
+		cornerContour_io_ColorTriangles2D.set_cy(this1,cornerContour_io_ColorTriangles2D.get_cy(this1) + dy);
+	}
+	this1[0] = curPos;
+	if(this1[0] > this1[1] - 1) {
+		this1[1] = this1[0];
+	}
 };
 var cornerContour_io_IntIterStart = function(min_,max_) {
 	this.start = min_;
@@ -7313,11 +7374,20 @@ cornerContour_web_Sheet.prototype = {
 		this.cx = this.canvas2D.getContext("2d");
 	}
 };
+var cornerContourWebGLTest_LetterHolder = function(name,scale,range,y2,maxX) {
+	this.name = name;
+	this.scale = scale;
+	this.range = range;
+	this.y2 = y2;
+	this.maxX = maxX;
+};
+cornerContourWebGLTest_LetterHolder.__name__ = true;
 var cornerContourWebGLTest_CornerContourWebGL = function() {
 	this.theta = 0.;
 	this.allRange = [];
+	this.letterStore = new haxe_ds_StringMap();
 	this.divertTrace = new cornerContour_web_DivertTrace();
-	haxe_Log.trace("Contour Test",{ fileName : "src/cornerContourWebGLTest/CornerContourWebGL.js.hx", lineNumber : 68, className : "cornerContourWebGLTest.CornerContourWebGL", methodName : "new"});
+	haxe_Log.trace("Contour Test",{ fileName : "src/cornerContourWebGLTest/CornerContourWebGL.js.hx", lineNumber : 88, className : "cornerContourWebGLTest.CornerContourWebGL", methodName : "new"});
 	this.width = 1024;
 	this.height = 768;
 	this.mainSheet = new cornerContour_web_Sheet();
@@ -7497,8 +7567,9 @@ var cornerContourWebGLTest_CornerContourWebGL = function() {
 		while(_g < _g1.length) {
 			var i = _g1[_g];
 			++_g;
+			cornerContour_io_ColorTriangles2D.translateRange(_gthis.renderer.arrData,i,0,0.0004 * Math.sin(_gthis.theta));
 			var this1 = _gthis.renderer.arrData;
-			var dy = 0.0004 * Math.sin(_gthis.theta);
+			var t = Math.cos(_gthis.theta);
 			var temp = this1[0];
 			var _g_min = i.start;
 			var _g_max = i.max;
@@ -7507,28 +7578,6 @@ var cornerContourWebGLTest_CornerContourWebGL = function() {
 				this1[0] = i1;
 				if(this1[0] > this1[1] - 1) {
 					this1[1] = this1[0];
-				}
-				cornerContour_io_ColorTriangles2D.set_ax(this1,cornerContour_io_ColorTriangles2D.get_ax(this1));
-				cornerContour_io_ColorTriangles2D.set_ay(this1,cornerContour_io_ColorTriangles2D.get_ay(this1) + dy);
-				cornerContour_io_ColorTriangles2D.set_bx(this1,cornerContour_io_ColorTriangles2D.get_bx(this1));
-				cornerContour_io_ColorTriangles2D.set_by(this1,cornerContour_io_ColorTriangles2D.get_by(this1) + dy);
-				cornerContour_io_ColorTriangles2D.set_cx(this1,cornerContour_io_ColorTriangles2D.get_cx(this1));
-				cornerContour_io_ColorTriangles2D.set_cy(this1,cornerContour_io_ColorTriangles2D.get_cy(this1) + dy);
-			}
-			this1[0] = temp;
-			if(this1[0] > this1[1] - 1) {
-				this1[1] = this1[0];
-			}
-			var this2 = _gthis.renderer.arrData;
-			var t = Math.cos(_gthis.theta);
-			var temp1 = this2[0];
-			var _g_min1 = i.start;
-			var _g_max1 = i.max;
-			while(_g_min1 < _g_max1) {
-				var i2 = _g_min1++;
-				this2[0] = i2;
-				if(this2[0] > this2[1] - 1) {
-					this2[1] = this2[0];
 				}
 				var smooth = true;
 				if(smooth == null) {
@@ -7543,31 +7592,31 @@ var cornerContourWebGLTest_CornerContourWebGL = function() {
 				var b2 = 0.;
 				var a2 = 1.;
 				var v = smooth ? t * t * t * (t * (t * 6.0 - 15.0) + 10.0) : t;
-				cornerContour_io_ColorTriangles2D.set_redA(this2,r + v * (r2 - r));
+				cornerContour_io_ColorTriangles2D.set_redA(this1,r + v * (r2 - r));
 				var v1 = b + v * (b2 - b);
-				this2[(this2[0] | 0) * 18 + 4 + 2] = v1;
+				this1[(this1[0] | 0) * 18 + 4 + 2] = v1;
 				var v2 = g + v * (g2 - g);
-				this2[(this2[0] | 0) * 18 + 3 + 2] = v2;
+				this1[(this1[0] | 0) * 18 + 3 + 2] = v2;
 				var v3 = a + v * (a2 - a);
-				this2[(this2[0] | 0) * 18 + 5 + 2] = v3;
-				cornerContour_io_ColorTriangles2D.set_redB(this2,r + v * (r2 - r));
+				this1[(this1[0] | 0) * 18 + 5 + 2] = v3;
+				cornerContour_io_ColorTriangles2D.set_redB(this1,r + v * (r2 - r));
 				var v4 = b + v * (b2 - b);
-				this2[(this2[0] | 0) * 18 + 10 + 2] = v4;
+				this1[(this1[0] | 0) * 18 + 10 + 2] = v4;
 				var v5 = g + v * (g2 - g);
-				this2[(this2[0] | 0) * 18 + 9 + 2] = v5;
+				this1[(this1[0] | 0) * 18 + 9 + 2] = v5;
 				var v6 = a + v * (a2 - a);
-				this2[(this2[0] | 0) * 18 + 11 + 2] = v6;
-				cornerContour_io_ColorTriangles2D.set_redC(this2,r + v * (r2 - r));
+				this1[(this1[0] | 0) * 18 + 11 + 2] = v6;
+				cornerContour_io_ColorTriangles2D.set_redC(this1,r + v * (r2 - r));
 				var v7 = b + v * (b2 - b);
-				this2[(this2[0] | 0) * 18 + 16 + 2] = v7;
+				this1[(this1[0] | 0) * 18 + 16 + 2] = v7;
 				var v8 = g + v * (g2 - g);
-				this2[(this2[0] | 0) * 18 + 15 + 2] = v8;
+				this1[(this1[0] | 0) * 18 + 15 + 2] = v8;
 				var v9 = a + v * (a2 - a);
-				this2[(this2[0] | 0) * 18 + 17 + 2] = v9;
+				this1[(this1[0] | 0) * 18 + 17 + 2] = v9;
 			}
-			this2[0] = temp1;
-			if(this2[0] > this2[1] - 1) {
-				this2[1] = this2[0];
+			this1[0] = temp;
+			if(this1[0] > this1[1] - 1) {
+				this1[1] = this1[0];
 			}
 			_gthis.theta += 30 * Math.PI / 180;
 		}
@@ -7601,9 +7650,10 @@ var cornerContourWebGLTest_CornerContourWebGL = function() {
 		gl.enable(3042);
 		gl.blendFunc(1,771);
 		gl.enable(2884);
+		var last = _gthis.allRange.length - 1;
 		var this1 = _gthis.renderer;
 		var ii_min = _gthis.allRange[0].start;
-		var ii_max = _gthis.allRange[_gthis.allRange.length - 1].max;
+		var ii_max = _gthis.allRange[last].max;
 		var this2 = new cornerContour_io_IntIterStart(ii_min,ii_max);
 		var range = this2;
 		var partData = this1.currData.subarray(range.start * this1.triSize,range.max * this1.triSize);
@@ -7629,14 +7679,51 @@ cornerContourWebGLTest_CornerContourWebGL.prototype = {
 		while(_g < haxeLetters.length) {
 			var letter = haxeLetters[_g];
 			++_g;
-			space += this.displayGlyph(HxOverrides.cca(letter,0) - 28,fontUtils,displayScale,space,y2);
+			var letterHolder = this.letterStore.h[letter];
+			if(letterHolder == null) {
+				var currPos = this.pen2D.arr[0] | 0;
+				space += this.displayGlyph(HxOverrides.cca(letter,0) - 28,letter,fontUtils,displayScale,space,y2);
+				var endPos = this.pen2D.arr[0] - 1 | 0;
+			} else {
+				var currPos1 = this.pen2D.arr[0] | 0;
+				var this1 = this.pen2D.arr;
+				var this2 = letterHolder.range;
+				cornerContour_io_ArrayFlatDepth.cloneRangeToPos(this1,letterHolder.range.start * 7,7 * (this2.max - this2.start + 1) | 0,this1.length - 1);
+				var this3 = letterHolder.range;
+				var this4 = new cornerContour_io_IntIterStart(currPos1,currPos1 + (this3.max - this3.start + 1) - 1);
+				var range2 = this4;
+				var this5 = this.pen2D.arr;
+				var px = 516 * letterHolder.scale + space;
+				var curPos = this5[0];
+				var minX = 100000000000;
+				var _g_min = range2.start;
+				var _g_max = range2.max;
+				while(_g_min < _g_max) {
+					var i = _g_min++;
+					this5[0] = i;
+					if(Math.min(Math.min(cornerContour_io_Array2DTriangles.get_ax(this5),cornerContour_io_Array2DTriangles.get_bx(this5)),cornerContour_io_Array2DTriangles.get_cx(this5)) < minX) {
+						minX = Math.min(Math.min(cornerContour_io_Array2DTriangles.get_ax(this5),cornerContour_io_Array2DTriangles.get_bx(this5)),cornerContour_io_Array2DTriangles.get_cx(this5));
+					}
+				}
+				this5[0] = curPos;
+				var minX1 = minX;
+				var dx = px - minX1;
+				cornerContour_io_Array2DTriangles.translateRange(this5,range2,dx,0);
+				if(letterHolder.y2 != y2) {
+					cornerContour_io_Array2DTriangles.translateRange(this.pen2D.arr,range2,0,y2 - letterHolder.y2);
+				}
+				this.allRange.push(range2);
+				var val = range2.max + 1;
+				this.pen2D.arr[0] = val;
+				space += letterHolder.maxX;
+			}
 			if(space > 500 && letter == " ") {
 				space = 0;
 				y2 += 80 * displayScale;
 			}
 		}
 	}
-	,displayGlyph: function(index,utils,displayScale,space,y2) {
+	,displayGlyph: function(index,letter,utils,displayScale,space,y2) {
 		if(y2 == null) {
 			y2 = 0;
 		}
@@ -7672,6 +7759,12 @@ cornerContourWebGLTest_CornerContourWebGL.prototype = {
 		var ii_max = this.pen2D.arr[0] - 1 | 0;
 		var this1 = new cornerContour_io_IntIterStart(ii_min,ii_max);
 		tmp.push(this1);
+		var ii_min = s;
+		var ii_max = this.pen2D.arr[0] - 1 | 0;
+		var this1 = new cornerContour_io_IntIterStart(ii_min,ii_max);
+		var ir = this1;
+		var letterHolder = new cornerContourWebGLTest_LetterHolder(letter,scale,ir,y2,maxX);
+		this.letterStore.h[letter] = letterHolder;
 		return maxX;
 	}
 	,drawContour: function(contour,x,y,scale) {
